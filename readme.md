@@ -4,6 +4,22 @@ This repository will act as both a journal and testbed for me. It's so easy to g
 
 Though I could make all of this information private, that defeats the purpose of making it widely accessible to me. To maintain privacy, I setup a toy encryption scheme to obfuscate my thoughts. The algorithm, given in encrption.py, encrypts and decrypts all of the entries according to a password set in password.password. I will push the original file up as TestPassword, but will ignore future changes to that file. Upon pulling the repo, decrypt the folder using encryption.py. When pushing to the repo, encrypt the folder using encryption.py.
 
+To ignore changes to your password file, you may need to run this command:
+
+```
+git update-index --skip-worktree password.password
+```
+
+To encrypt: 
+```
+encryption.py
+```
+
+To decrypt:
+```
+encryption.py 0
+```
+
 ## Current Status
 
 - The basic encryption scheme is complete

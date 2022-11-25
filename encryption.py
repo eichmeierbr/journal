@@ -6,8 +6,6 @@ class EncryptionParams:
     def __init__(self):
         self.encrypted_folder = 'encrypted'
         self.decrypted_folder = 'decrypted'
-        self.unencrypted_extensions = ['.txt', '.md']
-        self.encrypted_extensions = ['.txte', '.mde']
 
 def load_passcode() -> str:
     with open('password.password', 'r') as password_file:
@@ -55,16 +53,13 @@ def process_file(filepath:str, passcode:str, isEncrypt:bool) -> str:
 
     # Get output file extension
     params = EncryptionParams()
-    outputExtension = os.path.splitext(filepath)[1]
 
     if isEncrypt:
         input_dir = params.decrypted_folder
         output_dir = params.encrypted_folder
-        outputExtension += 'e'
     else:
         input_dir = params.encrypted_folder
         output_dir = params.decrypted_folder
-        outputExtension = outputExtension[:-1] 
 
     # Open file and process 
     with open(f"{input_dir}/{filepath}", 'rb') as unprocessed:
@@ -75,6 +70,7 @@ def process_file(filepath:str, passcode:str, isEncrypt:bool) -> str:
     processedFileName = process_string(os.path.splitext(filepath)[0], key, isEncrypt)
 
     # Write output file
+    outputExtension = os.path.splitext(filepath)[1]
     with open(f'{output_dir}/{processedFileName}{outputExtension}', 'wb') as encrypted_file:
         encrypted_file.write(processed)
     
@@ -88,16 +84,13 @@ def process_folder(isEncrypt:bool, passcode:str=None) -> None:
     params = EncryptionParams()
 
     if isEncrypt:
-        desired_extensions = params.unencrypted_extensions
         input_dir = params.decrypted_folder
     else:
-        desired_extensions = params.encrypted_extensions
         input_dir = params.encrypted_folder
 
 
     for f in os.listdir(f'{input_dir}'):
-        if os.path.splitext(f)[1] in desired_extensions:
-            process_file(f, passcode, isEncrypt)      
+        process_file(f, passcode, isEncrypt)      
 
 
 if __name__=="__main__":
@@ -105,4 +98,4 @@ if __name__=="__main__":
         needEncrypt = sys.argv[1] == 1
         process_folder(needEncrypt)
     else:
-        process_folder(False)
+        process_folder(True)
