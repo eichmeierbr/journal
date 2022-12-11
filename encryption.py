@@ -96,6 +96,11 @@ def process_folder(isEncrypt:bool, passcode:str=None) -> None:
 if __name__=="__main__":
     if len(sys.argv) > 1:
         needEncrypt = sys.argv[1] == 1
+        if needEncrypt:
+            print("Beginning Encryption")
+        else:
+            print("Beginning Decryption")
         process_folder(needEncrypt)
     else:
+        print("Beginning Encryption")
         process_folder(True)
