@@ -1,2 +1,4 @@
 decrypted/
 password.password
+_site/
+.jekyll_cache/
