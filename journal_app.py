@@ -3,7 +3,14 @@ import os
 
 from encryption import *
 
+def get_decrypted_folder(files, key):
+    a = {fil:process_string(fil,key,False) for fil in files}
+    return a
 
+def save_file(file, text, key):
+    enc_text = process_string(text, key, True).encode('latin-1')
+    with open(f"encrypted/{selected_file}", "wb") as f:
+        f.write(enc_text)
 
 
 if __name__=="__main__":
@@ -21,19 +28,19 @@ if __name__=="__main__":
         
     key = gen_fernet_key(password)
 
-    process_folder(0, password)
-    
-    # Have a better explorer here
-    fils = [ process_string(fil.split('.')[0], key, False) + '.' + fil.split('.')[1] for fil in  os.listdir('encrypted')]
-    fils.sort()
-    fils.append('')
+    # TODO: Have a better explorer here
+    # fils = [ process_string(fil.split('.')[0], key, False) + '.' + fil.split('.')[1] for fil in  os.listdir('encrypted')]
+    # fils.sort()
+    # fils.append('')
 
-    selected_file = st.sidebar.selectbox("Journal Files", fils)
-
+    fils = os.listdir('encrypted')
+    files_decrypted = get_decrypted_folder(fils, key)
+    selected_file = st.sidebar.selectbox("Journal Files", fils, format_func=lambda x: files_decrypted[x])
 
     file_contents = ''
-    with open(f"decrypted/{selected_file}", "r") as f:    
-        file_contents = f.read()
+    with open(f"encrypted/{selected_file}", "rb") as f:    
+        fil_conts = f.read()  
+        file_contents = process_bytes(fil_conts, key, False).decode('latin-1')
 
     journal_mode = st.sidebar.radio("Mode Selection", ("Edit", "Render"))
     
@@ -43,7 +50,4 @@ if __name__=="__main__":
         new_file_contents = st.text_area("Edit File", file_contents, 600)
 
         if new_file_contents != file_contents:
-            st.button("Save File", on_click=process_file(selected_file,password, True))
-
-
-    
+            st.button("Save File", on_click=save_file, args=(f'encrypted/{selected_file}', new_file_contents, key))

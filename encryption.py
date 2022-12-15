@@ -66,15 +66,12 @@ def process_file(filepath:str, passcode:str, isEncrypt:bool) -> str:
         _file = unprocessed.read()
         processed = process_bytes(_file, key, isEncrypt)
 
-    # Get output file name
-    processedFileName = process_string(os.path.splitext(filepath)[0], key, isEncrypt)
+    processedFileName = process_string(filepath, key, isEncrypt)
 
-    # Write output file
-    outputExtension = os.path.splitext(filepath)[1]
-    with open(f'{output_dir}/{processedFileName}{outputExtension}', 'wb') as encrypted_file:
+    with open(f'{output_dir}/{processedFileName}', 'wb') as encrypted_file:
         encrypted_file.write(processed)
-    
-    return f'{processedFileName}{outputExtension}'
+
+    return f'{processedFileName}'
 
 
 def process_folder(isEncrypt:bool, passcode:str=None) -> None:
@@ -95,7 +92,7 @@ def process_folder(isEncrypt:bool, passcode:str=None) -> None:
 
 if __name__=="__main__":
     if len(sys.argv) > 1:
-        needEncrypt = sys.argv[1] == 1
+        needEncrypt = sys.argv[1] == '1'
         if needEncrypt:
             print("Beginning Encryption")
         else:
