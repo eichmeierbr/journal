@@ -23,8 +23,9 @@ def get_decrypted_folder(files: list[str], key: bytes) -> list[str]:
 
 
 def save_file(file: str, text: str, key: bytes) -> None:
+
     enc_text = process_string(text, key, True).encode('latin-1')
-    with open(f"encrypted/{file}", "wb") as f:
+    with open(file, "wb") as f:
         f.write(enc_text)
 
 
@@ -62,11 +63,16 @@ def delete_file(selected_file: str, file_contents: str) -> None:
     st.markdown(file_contents)
 
 
-def edit_file(selected_file: str, file_contents: str, key: bytes) -> None:
+def edit_file(selected_file: str, file_contents: str, key: bytes, split=False) -> None:
     col1, col2 = st.columns(2)
     new_file_name = col1.text_input("File Name", process_string(selected_file,key,False), label_visibility='collapsed')
     col2.button("Rename File", on_click=rename_file, args=(selected_file, new_file_name, key))
-    new_file_contents = st.text_area("File Contents", file_contents, 600)
+
+    if split:
+        new_file_contents = col1.text_area("File Contents", file_contents, 600)
+        col2.markdown(file_contents)
+    else:
+        new_file_contents = st.text_area("File Contents", file_contents, 600)
 
     st.button("Save File", on_click=save_file, args=(f'encrypted/{selected_file}', new_file_contents, key))
 
@@ -84,6 +90,7 @@ if __name__=="__main__":
     journal_mode = st.sidebar.radio("Mode Selection", (
                                                         "Edit", 
                                                         "View", 
+                                                        "Split",
                                                         "Delete File",
                                                         "Add File", 
                                                         ),
@@ -115,3 +122,6 @@ if __name__=="__main__":
         edit_file(selected_file, file_contents, key)
     elif journal_mode == "Delete File":
         delete_file(selected_file, file_contents)
+    elif journal_mode == "Split":
+        edit_file(selected_file, file_contents, key, True)
+
